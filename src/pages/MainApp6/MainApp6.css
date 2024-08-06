@@ -1,0 +1,94 @@
+.main-app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(to bottom, rgb(126, 190, 141)
+  , #e6f7f2);
+}
+
+
+.header {
+  text-align: left;
+  color: #888888;
+  margin-bottom: 20px;
+}
+
+.content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+
+.unicorn-image {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+}
+
+.title {
+  display: flex;
+  font-family: 'Urban Starblues';
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 31px;
+  color: rgba(52, 46, 77, 1);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+
+.description {
+  display: flex;
+  font-family: 'Urbanist';
+  font-size: 16px;
+  color: rgba(91, 84, 117, 1);
+  font-weight: 400;
+  max-width: 300px;
+  margin: 0 auto 30px;
+  text-align: center;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 300px;
+}
+
+.custom-ton-button {
+  width: 100% !important;
+  --tc-button-background: #4CAF50 !important;
+  --tc-button-foreground: #ffffff !important;
+  --tc-button-border-radius: 10px !important;
+  font-size: 18px !important;
+  padding: 12px 0 !important;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 300px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-around;
+  background-color: #1e2c3d;
+  padding: 15px 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.footer-icon {
+  font-size: 24px;
+  color: #ffffff;
+  object-fit: cover;
+}

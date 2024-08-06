@@ -20,6 +20,15 @@ export const IndexPage: FC = () => {
             TON Connect
           </Cell>
         </Link>
+        <Link to='/main-app-6'>
+          <Cell
+            // Если у вас есть иконка, раскомментируйте следующую строку
+            // before={<Image src={mainApp6Icon} style={{ backgroundColor: '#YOUR_COLOR' }}/>}
+            subtitle='Description of your Main App 6'
+          >
+            Main App 6
+          </Cell>
+        </Link>
       </Section>
       <Section
         header='Application Launch Data'

@@ -1,0 +1,148 @@
+
+
+.referral-container {
+    padding: 1rem;
+    background-color: #f3f4f6;
+    min-height: 100vh;
+  }
+  
+  .info-card {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    font-weight: 400;
+    font-size: 25px;
+    line-height: 18px;
+    text-align: center;
+    color: #333;
+
+  }
+  
+  .friends-list {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .friends-list h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .friend-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .friend-item:last-child {
+    border-bottom: none;
+  }
+  
+  .friend-avatar {
+    width: 2rem;
+    height: 2rem;
+    background-color: #a7f3d0;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+  }
+  
+  .friend-points {
+    color: #059669;
+  }
+  
+  .invite-button {
+    display: block;
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    text-decoration: none;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .invite-button:hover {
+    background-color: #45a049;
+  }
+  .referral-link {
+    margin-top: 1rem;
+    background-color: #dbeafe;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .referral-link svg {
+    color: #3b82f6;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+  
+  .referral-link p {
+    font-size: 0.875rem;
+    color: #1e40af;
+  }
+
+  .referrals-info {
+    margin-top: 1rem;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    color: #333;
+  }
+  
+  .referrals-info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .referrals-info ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .referrals-info li {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-bottom: 0.25rem;
+  }
+
+  .total-points {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+  }
+  
+  .total-points h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .ticket-discount {
+    width: 16px;
+    height: 16px;
+    margin: 0 4px;
+    vertical-align: middle;
+  }

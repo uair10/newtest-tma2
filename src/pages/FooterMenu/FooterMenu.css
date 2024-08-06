@@ -1,0 +1,27 @@
+.footer-menu {
+    display: flex;
+    justify-content: space-around;
+    background-color: #1e2c3d;
+    padding: 15px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  
+  .footer-icon {
+    font-size: 24px;
+    color: #ffffff;
+    object-fit: cover;
+  }
+  
+  .footer-icon img {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s, filter 0.3s;
+  }
+  
+  .footer-icon.active img {
+    filter: brightness(0) saturate(100%) invert(51%) sepia(47%) saturate(1660%) hue-rotate(74deg) brightness(98%) contrast(92%);
+    transform: scale(1.2);
+  }
