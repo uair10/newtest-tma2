@@ -3,7 +3,8 @@ import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
 import MainApp6 from '@/pages/MainApp6/MainApp6';
 import MainApp1 from '@/pages/MainApp1/MainApp1';
 import ReferalSystem from '@/pages/ReferalSystem/ReferalSystem';
-
+import TasksPage from '@/pages/TasksPage/TasksPage';
+import TaskDetailsPage from '@/pages/TasksPage/TaskDetailsPage'; // Импортируем новый компонент
 
 interface Route {
   path: string;
@@ -12,14 +13,14 @@ interface Route {
   icon?: JSX.Element;
 }
 
-
-  export const routes: Route[] = [
-    { path: '/', Component: MainApp6 },
-    { path: '/shop', Component: MainApp1 },
-    { path: '/clipboard', Component: MainApp6 },
-    { path: '/bag', Component: MainApp6 },
-    { path: '/profile', Component: ReferalSystem },
-    { path: '/info', Component: MainApp6 },
+export const routes: Route[] = [
+  { path: '/', Component: MainApp1 },
+  { path: '/shop', Component: MainApp1 },
+  { path: '/clipboard', Component: TasksPage },
+  { path: '/task/:taskId', Component: TaskDetailsPage }, // Добавляем новый маршрут для TaskDetailsPage
+  { path: '/bag', Component: MainApp6 },
+  { path: '/profile', Component: ReferalSystem },
+  { path: '/info', Component: MainApp6 },
   {
     path: '/ton-connect',
     Component: TONConnectPage,

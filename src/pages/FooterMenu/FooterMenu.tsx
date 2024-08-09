@@ -12,11 +12,24 @@ const FooterMenu: React.FC = () => {
   const [activePath, setActivePath] = useState(location.pathname);
 
   useEffect(() => {
-    setActivePath(location.pathname);
+    const path = location.pathname;
+    if (path === '/' || path === '/shop') {
+      setActivePath('/shop');
+    } else if (path.startsWith('/task/')) {
+      setActivePath('/clipboard');
+    } else {
+      setActivePath(path);
+    }
   }, [location]);
 
-  const handleLinkClick = (path: string) => {
-    setActivePath(path);
+  const isActive = (path: string) => {
+    if (path === '/shop' && (activePath === '/' || activePath === '/shop')) {
+      return true;
+    }
+    if (path === '/clipboard' && activePath.startsWith('/task/')) {
+      return true;
+    }
+    return activePath === path;
   };
 
   return (
@@ -26,13 +39,12 @@ const FooterMenu: React.FC = () => {
         { path: '/clipboard', image: clipboardImage, alt: 'Clipboard' },
         { path: '/bag', image: bagImage, alt: 'Bag' },
         { path: '/profile', image: profileActiveImage, alt: 'Profile' },
-        { path: '/main-app-6', image: infoImage, alt: 'Info' },
+        { path: '/info', image: infoImage, alt: 'Info' },
       ].map(({ path, image, alt }) => (
         <Link
           key={path}
           to={path}
-          className={`footer-icon ${activePath === path ? 'active' : ''}`}
-          onClick={() => handleLinkClick(path)}
+          className={`footer-icon ${isActive(path) ? 'active' : ''}`}
         >
           <img src={image} alt={alt} />
         </Link>

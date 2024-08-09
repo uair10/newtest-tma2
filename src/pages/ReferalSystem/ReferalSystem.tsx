@@ -1,24 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ticketDiscount from "./ticket-discount.png";
 import './ReferalSystem.css';
 import FooterMenu from '../FooterMenu/FooterMenu';
-import { initUtils } from '@telegram-apps/sdk';
-
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp?: {
-        initDataUnsafe?: {
-          start_param?: string;
-          user?: {
-            id: string;
-          };
-        };
-      };
-    };
-  }
-}
+import { initUtils, initInitData } from '@telegram-apps/sdk';
 
 interface Friend {
   id: string;
@@ -31,36 +15,47 @@ const ReferralSystem: React.FC = () => {
   const [totalPoints, setTotalPoints] = useState(0);
   const [referralLink, setReferralLink] = useState('');
   const [referrals, setReferrals] = useState<string[]>([]);
+  
+  const initDataUnsafe = initInitData();
+
+  const handleReferral = useCallback((referrerId: string) => {
+    setReferrals(prev => {
+      if (!prev.includes(referrerId)) {
+        return [...prev, referrerId];
+      }
+      return prev;
+    });
+  }, []);
 
   useEffect(() => {
-    // Получаем Telegram ID пользователя
-    const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "defaultId";
-    const botUsername = "tma123_bot"; // Замените на имя вашего бота
-    const newReferralLink = `https://t.me/${botUsername}/start?startapp=kentId${userId}`;
-    setReferralLink(newReferralLink);
+    const botUsername = "tma123_bot"; // Replace with your bot's name
+    
+    if (initDataUnsafe && initDataUnsafe.user?.id) {
+      const userId = initDataUnsafe.user.id;
+      const newReferralLink = `https://t.me/${botUsername}?startapp=kentId${userId}`;
+      setReferralLink(newReferralLink);
+    } else {
+      console.error('User ID not found');
+    }
 
-    // Проверяем start_param при загрузке
-    const webApp = window.Telegram?.WebApp;
-    if (webApp?.initDataUnsafe?.start_param) {
-      const startParam = webApp.initDataUnsafe.start_param;
+    if (initDataUnsafe && initDataUnsafe.startParam) {
+      const startParam = initDataUnsafe.startParam;
       if (startParam.startsWith('kentId')) {
-        const referrerId = startParam.slice(6); // Удаляем 'kentId' из начала
+        const referrerId = startParam.slice(6);
         handleReferral(referrerId);
       }
     }
 
-    // Загружаем данные о друзьях
     fetchFriends();
-  }, []);
-
-  useEffect(() => {
-    const total = friends.reduce((sum, friend) => sum + friend.points, 0);
-    setTotalPoints(total);
-  }, [friends]);
+  }, [initDataUnsafe, handleReferral]);
 
   const fetchFriends = async () => {
-    // Замените это на реальный API-вызов
+    // Replace with actual API call
     const mockFriends: Friend[] = [
+      { id: '1', name: 'OyVeyLaVey', points: 89923 },
+      { id: '2', name: 'sonicx123', points: 89923 },
+      { id: '3', name: 'OyVeyLaVey', points: 89923 },
+      { id: '4', name: 'sonicx123', points: 89923 },
       { id: '1', name: 'OyVeyLaVey', points: 89923 },
       { id: '2', name: 'sonicx123', points: 89923 },
       { id: '3', name: 'OyVeyLaVey', points: 89923 },
@@ -69,23 +64,22 @@ const ReferralSystem: React.FC = () => {
     setFriends(mockFriends);
   };
 
-  const handleReferral = (referrerId: string) => {
-    // Здесь вы бы отправили запрос на ваш бэкенд для обработки реферала
-    console.log(`Обработка реферала от пользователя: ${referrerId}`);
-    setReferrals(prev => [...prev, referrerId]);
-  };
-
   const handleInviteFriend = () => {
     const utils = initUtils();
     utils.shareURL(
       referralLink,
-      'Залетай в моё супер приложение!'
+      '420!'
     );
   };
 
+  useEffect(() => {
+    const total = friends.reduce((sum, friend) => sum + friend.points, 0);
+    setTotalPoints(total);
+  }, [friends]);
+
   return (
     <div className="referral-container">
-      <div className="info-card">
+      <div className="info-section">
         <p> 
           Score 10% from buddies + 2.5% from their referrals.
         </p>
@@ -94,7 +88,7 @@ const ReferralSystem: React.FC = () => {
         </p>
       </div>
   
-      <div className="friends-list">
+      <div className="friends-section">
         <h3>{friends.length} Frens</h3>
         <ul>
           {friends.map((friend) => (
@@ -118,14 +112,7 @@ const ReferralSystem: React.FC = () => {
         Invite a fren
       </button>
       
-      <div className="referral-link">
-        <AlertCircle />
-        <p>
-          Your referral link: {referralLink}
-        </p>
-      </div>
-
-      <div className="referrals-info">
+      <div className="referrals-section">
         <h3>Invited frens: {referrals.length}</h3>
         <ul>
           {referrals.map((referralId, index) => (
@@ -137,9 +124,7 @@ const ReferralSystem: React.FC = () => {
       <div className="total-points">
         <h3>Total Points: {totalPoints}</h3>
       </div>
-      <div>
-        <FooterMenu />
-      </div>
+      <FooterMenu />
     </div>
   );
 };

@@ -37,13 +37,30 @@ export const App: FC = () => {
     return viewport && bindViewportCSSVars(viewport);
   }, [viewport]);
 
-  // Create a new application navigator and attach it to the browser history, so it could modify
-  // it and listen to its changes.
+  useEffect(() => {
+    if (viewport) {
+      // Expand the viewport initially
+      viewport.expand();
+
+      // Add a scroll event listener to the window
+      const handleScroll = () => {
+        // Check if we're at the top of the page
+        if (window.scrollY === 0) {
+          viewport.expand();
+        }
+      };
+
+      window.addEventListener('scroll', handleScroll);
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [viewport]);
+
   const navigator = useMemo(() => initNavigator('app-navigation-state'), []);
   const [location, reactNavigator] = useIntegration(navigator);
 
-  // Don't forget to attach the navigator to allow it to control the BackButton state as well
-  // as browser history.
   useEffect(() => {
     navigator.attach();
     return () => navigator.detach();

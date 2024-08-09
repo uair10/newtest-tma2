@@ -38,9 +38,9 @@ const MainApp1: React.FC = () => {
           <p>We calculated the best selection for any experience or price range.</p>
         </div>
       </div>
-
+      <div className="button-container">
       <a href="#" className="shop-button">Shop Now</a>
-      
+      </div>
       <div className="products-section">
         <h1>PRODUCTS YOU LOVE</h1>
         <p>Shop our highly curated selection of the best brands, for the best value</p>
@@ -64,8 +64,9 @@ const MainApp1: React.FC = () => {
         </div>
       </div>
 
+      <div className="button-container">
       <a href="#" className="shop-button">Shop Now</a>
-      
+      </div>
       <div className="best-sellers-section">
         <h1>BEST SELLERS</h1>
         <div className="best-sellers-grid">
@@ -89,19 +90,37 @@ const MainApp1: React.FC = () => {
             <h3>Pax High Purity: Limoncello Haze</h3>
             <p>PAX</p>
           </div>
+          <div className="best-seller-item">
+            <img src={peachesAndCreamImage} alt="Peaches and Cream" />
+            <h3>Peaches and Cream - 1g</h3>
+            <p>Kiva</p>
+          </div>
+          <div className="best-seller-item">
+            <img src={peachesAndCreamImage} alt="Peaches and Cream" />
+            <h3>Peaches and Cream - 1g</h3>
+            <p>Kiva</p>
+          </div>
         </div>
+        <div className="see-more-container">
         <a href="#" className="see-more-link">See More →</a>
+        </div>
       </div>
       
       <div className="brands-section">
         <h1>BRANDS WE CARRY</h1>
         <div className="brands-grid">
-          <img src={rawGardenLogo} alt="Raw Garden" className="brand-logo" />
-          <img src={stiiizyLogo} alt="Stiiizy" className="brand-logo" />
-          <img src={kivaLogo} alt="Kiva" className="brand-logo" />
-          <img src={humboldtFarmsLogo} alt="Humboldt Farms" className="brand-logo" />
-          <img src={stiiizyLogo} alt="Stiiizy" className="brand-logo" />
-          <img src={rawGardenLogo} alt="Raw Garden" className="brand-logo" />
+          <div className="brand-item">
+            <img src={rawGardenLogo} alt="Raw Garden" className="brand-logo" />
+          </div>
+          <div className="brand-item">
+            <img src={stiiizyLogo} alt="Stiiizy" className="brand-logo" />
+          </div>
+          <div className="brand-item">
+            <img src={kivaLogo} alt="Kiva" className="brand-logo" />
+          </div>
+          <div className="brand-item">
+            <img src={humboldtFarmsLogo} alt="Humboldt Farms" className="brand-logo" />
+          </div>
         </div>
       </div>
       <div>

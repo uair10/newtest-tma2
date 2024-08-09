@@ -10,6 +10,21 @@
   , #e6f7f2);
 }
 
+.main-app-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('x.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.05;
+    z-index: 0;
+  
+}
 
 .header {
   text-align: left;
@@ -25,7 +40,6 @@
   justify-content: center;
   text-align: center;
 }
-
 
 .unicorn-image {
   width: 80px;
@@ -44,7 +58,6 @@
   text-align: center;
 }
 
-
 .description {
   display: flex;
   font-family: 'Urbanist';
@@ -61,6 +74,7 @@
   justify-content: center;
   width: 100%;
   max-width: 300px;
+  z-index: 1000;
 }
 
 .custom-ton-button {
@@ -74,6 +88,7 @@
   justify-content: center;
   width: 100%;
   max-width: 300px;
+  z-index: 1000;
 }
 
 .footer {
