@@ -1,44 +1,92 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
 import ticketDiscount from "./ticket-discount.png";
 import './ReferalSystem.css';
 import FooterMenu from '../FooterMenu/FooterMenu';
-import { initUtils, initInitData } from '@telegram-apps/sdk';
+import { initUtils, initInitData, InitData } from '@telegram-apps/sdk';
 
 interface Friend {
-  id: string;
-  name: string;
+  tg_id: string;
+  username: string;
   points: number;
 }
 
+interface User {
+  tg_id: string;
+  username: string;
+  ref_link: string;
+  points: number;
+}
+
+const API_BASE_URL = 'http://localhost:8001';  // Обновите на реальный URL вашего API
+
 const ReferralSystem: React.FC = () => {
   const [friends, setFriends] = useState<Friend[]>([]);
-  const [totalPoints, setTotalPoints] = useState(0);
+  const [userPoints, setUserPoints] = useState(0);
   const [referralLink, setReferralLink] = useState('');
   const [referrals, setReferrals] = useState<string[]>([]);
   
-  const initDataUnsafe = initInitData();
+  const initDataUnsafe: InitData | undefined = initInitData();
 
-  const handleReferral = useCallback((referrerId: string) => {
-    setReferrals(prev => {
-      if (!prev.includes(referrerId)) {
-        return [...prev, referrerId];
-      }
-      return prev;
-    });
-  }, []);
-
-  useEffect(() => {
-    const botUsername = "tma123_bot"; // Replace with your bot's name
-    
-    if (initDataUnsafe && initDataUnsafe.user?.id) {
-      const userId = initDataUnsafe.user.id;
-      const newReferralLink = `https://t.me/${botUsername}?startapp=kentId${userId}`;
-      setReferralLink(newReferralLink);
-    } else {
+  const handleReferral = useCallback(async (referrerId: string) => {
+    if (!initDataUnsafe?.user?.id) {
       console.error('User ID not found');
+      return;
     }
 
-    if (initDataUnsafe && initDataUnsafe.startParam) {
+    try {
+      await axios.post(`${API_BASE_URL}/referrals/`, {
+        user_tg_id: referrerId,
+        friend_tg_id: initDataUnsafe.user.id
+      });
+      setReferrals(prev => {
+        if (!prev.includes(referrerId)) {
+          return [...prev, referrerId];
+        }
+        return prev;
+      });
+      // Обновляем поинты пользователя после успешного реферала
+      fetchUserPoints();
+    } catch (error) {
+      console.error('Error creating referral:', error);
+    }
+  }, [initDataUnsafe?.user?.id]);
+
+  const fetchUserPoints = async () => {
+    if (!initDataUnsafe?.user?.id) {
+      console.error('User ID not found');
+      return;
+    }
+
+    try {
+      const response = await axios.get<{ points: number }>(`${API_BASE_URL}/users/${initDataUnsafe.user.id}/points`);
+      setUserPoints(response.data.points);
+    } catch (error) {
+      console.error('Error fetching user points:', error);
+    }
+  };
+
+  useEffect(() => {
+    const createOrGetUser = async () => {
+      if (initDataUnsafe?.user?.id && initDataUnsafe?.user?.username) {
+        try {
+          const response = await axios.post<User>(`${API_BASE_URL}/users/`, {
+            tg_id: initDataUnsafe.user.id,
+            username: initDataUnsafe.user.username
+          });
+          setReferralLink(response.data.ref_link);
+          setUserPoints(response.data.points);
+        } catch (error) {
+          console.error('Error creating/getting user:', error);
+        }
+      } else {
+        console.error('User ID or username not found');
+      }
+    };
+
+    createOrGetUser();
+
+    if (initDataUnsafe?.startParam) {
       const startParam = initDataUnsafe.startParam;
       if (startParam.startsWith('kentId')) {
         const referrerId = startParam.slice(6);
@@ -47,21 +95,21 @@ const ReferralSystem: React.FC = () => {
     }
 
     fetchFriends();
+    fetchUserPoints();
   }, [initDataUnsafe, handleReferral]);
 
   const fetchFriends = async () => {
-    // Replace with actual API call
-    const mockFriends: Friend[] = [
-      { id: '1', name: 'OyVeyLaVey', points: 89923 },
-      { id: '2', name: 'sonicx123', points: 89923 },
-      { id: '3', name: 'OyVeyLaVey', points: 89923 },
-      { id: '4', name: 'sonicx123', points: 89923 },
-      { id: '1', name: 'OyVeyLaVey', points: 89923 },
-      { id: '2', name: 'sonicx123', points: 89923 },
-      { id: '3', name: 'OyVeyLaVey', points: 89923 },
-      { id: '4', name: 'sonicx123', points: 89923 },
-    ];
-    setFriends(mockFriends);
+    if (!initDataUnsafe?.user?.id) {
+      console.error('User ID not found');
+      return;
+    }
+
+    try {
+      const response = await axios.get<Friend[]>(`${API_BASE_URL}/users/${initDataUnsafe.user.id}/friends`);
+      setFriends(response.data);
+    } catch (error) {
+      console.error('Error fetching friends:', error);
+    }
   };
 
   const handleInviteFriend = () => {
@@ -71,11 +119,6 @@ const ReferralSystem: React.FC = () => {
       '420!'
     );
   };
-
-  useEffect(() => {
-    const total = friends.reduce((sum, friend) => sum + friend.points, 0);
-    setTotalPoints(total);
-  }, [friends]);
 
   return (
     <div className="referral-container">
@@ -92,12 +135,12 @@ const ReferralSystem: React.FC = () => {
         <h3>{friends.length} Frens</h3>
         <ul>
           {friends.map((friend) => (
-            <li key={friend.id} className="friend-item">
+            <li key={friend.tg_id} className="friend-item">
               <div className="friend-info">
                 <div className="friend-avatar">
-                  {friend.name[0].toUpperCase()}
+                  {friend.username[0].toUpperCase()}
                 </div>
-                <span>{friend.name}</span>
+                <span>{friend.username}</span>
               </div>
               <span className="friend-points">{friend.points} BP</span>
             </li>
@@ -121,8 +164,8 @@ const ReferralSystem: React.FC = () => {
         </ul>
       </div>
 
-      <div className="total-points">
-        <h3>Total Points: {totalPoints}</h3>
+      <div className="user-points">
+        <h3>Your Points: {userPoints}</h3>
       </div>
       <FooterMenu />
     </div>
