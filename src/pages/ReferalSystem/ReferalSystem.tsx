@@ -29,7 +29,7 @@ const ReferralSystem: React.FC = () => {
 
         if (userId) {
           // Создание реферальной ссылки
-          const botUsername = "tma123_bot";
+          const botUsername = "@tesase_bot";
           const newReferralLink = `https://t.me/${botUsername}?startapp=${userId}`;
           setReferralLink(newReferralLink);
 
