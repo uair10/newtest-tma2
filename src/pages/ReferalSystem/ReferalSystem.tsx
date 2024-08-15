@@ -12,7 +12,7 @@ interface Referral {
   points: number;
 }
 
-const API_BASE_URL = 'https://1307-38-180-23-221.ngrok-free.app'; // Replace with your actual backend URL
+const API_BASE_URL = 'https://547a-38-180-23-221.ngrok-free.app'; // Replace with your actual backend URL
 
 const ReferralSystem: React.FC = () => {
   const [referrals, setReferrals] = useState<Referral[]>([]);
@@ -34,6 +34,7 @@ const ReferralSystem: React.FC = () => {
           setReferralLink(newReferralLink);
 
           // Проверка наличия стартового параметра (реферальной ссылки)
+          console.log('Start Parameter:', startParam);
           if (startParam) {
             const referrerId = parseInt(startParam, 10);
             if (!isNaN(referrerId)) {
@@ -54,7 +55,8 @@ const ReferralSystem: React.FC = () => {
     await fetch(`${API_BASE_URL}/referrals/`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        accept: 'application/json',
+        'User-agent': 'learning app',
       },
       body: JSON.stringify({
         user_tg_id: referrerId,
@@ -66,15 +68,42 @@ const ReferralSystem: React.FC = () => {
     fetchUserReferrals(userId);
   };
 
+  
   const fetchUserReferrals = async (userId: number) => {
-    const referralsResponse = await fetch(`${API_BASE_URL}/referrals/${userId}`);
-    const pointsResponse = await fetch(`${API_BASE_URL}/referrals/${userId}/points`);
-
-    const referralsData: Referral[] = await referralsResponse.json();
-    const { total_points } = await pointsResponse.json();
-
-    setReferrals(referralsData);
-    setTotalPoints(total_points);
+    console.log('Fetching referrals for user ID:', userId);
+    try {
+      const fetchOptions = {
+        method: 'GET',
+        mode: 'cors' as RequestMode,
+        credentials: 'include' as RequestCredentials,
+      };
+  
+      const referralsResponse = await fetch(`${API_BASE_URL}/referrals/${userId}`, fetchOptions);
+      const pointsResponse = await fetch(`${API_BASE_URL}/referrals/${userId}/points`, fetchOptions);
+  
+      console.log('Referrals response status:', referralsResponse.status);
+      console.log('Points response status:', pointsResponse.status);
+  
+      if (!referralsResponse.ok || !pointsResponse.ok) {
+        throw new Error('One or more API requests failed');
+      }
+  
+      const referralsData: Referral[] = await referralsResponse.json();
+      const pointsData = await pointsResponse.json();
+  
+      console.log('Referrals Data:', referralsData);
+      console.log('Points Data:', pointsData);
+  
+      if (!Array.isArray(referralsData) || typeof pointsData.total_points !== 'number') {
+        throw new Error('Unexpected data format from API');
+      }
+  
+      setReferrals(referralsData);
+      setTotalPoints(pointsData.total_points);
+    } catch (error) {
+      console.error('Error fetching user referrals:', error);
+      // Здесь вы можете добавить логику обработки ошибок, например, показать сообщение пользователю
+    }
   };
 
   const handleInviteFriend = () => {
