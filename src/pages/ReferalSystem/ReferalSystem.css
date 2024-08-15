@@ -179,3 +179,11 @@
   position: relative;
   z-index: 1;
 }
+
+.error-message {
+  color: red;
+  background-color: #ffeeee;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}

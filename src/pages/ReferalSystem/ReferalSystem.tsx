@@ -1,27 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { useInitData, useLaunchParams, type User } from '@telegram-apps/sdk-react';
+import { useInitData, useLaunchParams } from '@telegram-apps/sdk-react';
 import { initUtils } from '@telegram-apps/sdk';
 import ticketDiscount from "./ticket-discount.png";
 import './ReferalSystem.css';
 import FooterMenu from '../FooterMenu/FooterMenu';
 
 interface Referral {
+  id: number;
+  date: string;
   user_tg_id: number;
   friend_tg_id: number;
   points: number;
 }
 
-interface ReferralResponse {
-  referrals: Referral[];
-  total_points: number;
-}
-
-const API_BASE_URL = 'https://8d41-38-180-23-221.ngrok-free.app';
+const API_BASE_URL = 'https://ffaa-38-180-23-221.ngrok-free.app'; // Replace with your actual backend URL
 
 const ReferralSystem: React.FC = () => {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [totalPoints, setTotalPoints] = useState(0);
   const [referralLink, setReferralLink] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const initData = useInitData();
   const { startParam } = useLaunchParams();
@@ -31,14 +29,14 @@ const ReferralSystem: React.FC = () => {
       if (initData && initData.user) {
         const userId = initData.user.id;
         const botUsername = "tma123_bot"; // Replace with your bot's username
-        const newReferralLink = `https://t.me/${botUsername}?startapp=kentId${userId}`;
+        const newReferralLink = `https://t.me/${botUsername}?startapp=${userId}`;
         setReferralLink(newReferralLink);
 
         // Check if there's a referrer
-        if (startParam && startParam.startsWith('kentId')) {
-          const referrerId = parseInt(startParam.slice(6), 10);
+        if (startParam) {
+          const referrerId = parseInt(startParam, 10);
           if (!isNaN(referrerId)) {
-            await createReferral(initData.user, referrerId);
+            await createReferral(referrerId, userId);
           }
         }
 
@@ -49,7 +47,7 @@ const ReferralSystem: React.FC = () => {
     initApp();
   }, [initData, startParam]);
 
-  const createReferral = async (user: User, referrerId: number) => {
+  const createReferral = async (referrerId: number, userId: number) => {
     try {
       const response = await fetch(`${API_BASE_URL}/referrals/`, {
         method: 'POST',
@@ -57,33 +55,34 @@ const ReferralSystem: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          user_tg_id: user.id, 
-          friend_tg_id: referrerId
+          user_tg_id: referrerId, 
+          friend_tg_id: userId
         }),
       });
       if (!response.ok) {
         throw new Error('Failed to create referral');
       }
-      const result = await response.json();
-      console.log('Referral created:', result);
-      // Refresh user referrals after creating a new one
-      fetchUserReferrals(user.id);
+      await fetchUserReferrals(userId);
     } catch (error) {
       console.error('Error creating referral:', error);
+      setError('Failed to create referral. Please try again.');
     }
   };
 
   const fetchUserReferrals = async (userId: number) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users/${userId}/referrals`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch user referrals');
+      const referralsResponse = await fetch(`${API_BASE_URL}/referrals/${userId}`);
+      const pointsResponse = await fetch(`${API_BASE_URL}/referrals/${userId}/points`);
+      if (!referralsResponse.ok || !pointsResponse.ok) {
+        throw new Error('Failed to fetch user data');
       }
-      const data: ReferralResponse = await response.json();
-      setReferrals(data.referrals);
-      setTotalPoints(data.total_points);
+      const referralsData: Referral[] = await referralsResponse.json();
+      const { total_points } = await pointsResponse.json();
+      setReferrals(referralsData);
+      setTotalPoints(total_points);
     } catch (error) {
-      console.error('Error fetching user referrals:', error);
+      console.error('Error fetching user data:', error);
+      setError('Failed to fetch user data. Please try again.');
     }
   };
 
@@ -91,12 +90,13 @@ const ReferralSystem: React.FC = () => {
     const utils = initUtils();
     utils.shareURL(
       referralLink,
-      '420!'
+      'Join me on this awesome app!'
     );
   };
 
   return (
     <div className="referral-container">
+      {error && <div className="error-message">{error}</div>}
       <div className="info-section">
         <p>Score 10% from buddies + 2.5% from their referrals.</p>
         <p>
@@ -107,8 +107,8 @@ const ReferralSystem: React.FC = () => {
       <div className="friends-section">
         <h3>{referrals.length} Frens</h3>
         <ul>
-          {referrals.map((referral, index) => (
-            <li key={index} className="friend-item">
+          {referrals.map((referral) => (
+            <li key={referral.id} className="friend-item">
               <div className="friend-info">
                 <div className="friend-avatar">
                   {referral.friend_tg_id.toString()[0].toUpperCase()}
@@ -121,10 +121,7 @@ const ReferralSystem: React.FC = () => {
         </ul>
       </div>
 
-      <button
-        onClick={handleInviteFriend}
-        className="invite-button"
-      >
+      <button onClick={handleInviteFriend} className="invite-button">
         Invite a fren
       </button>
 
