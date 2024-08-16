@@ -12,7 +12,7 @@ interface Referral {
   points: number;
 }
 
-const API_BASE_URL = 'https://547a-38-180-23-221.ngrok-free.app'; // Replace with your actual backend URL
+const API_BASE_URL = 'https://violet-coins-feel.loca.lt'; // Replace with your actual backend URL
 
 const ReferralSystem: React.FC = () => {
   const [referrals, setReferrals] = useState<Referral[]>([]);
@@ -21,6 +21,31 @@ const ReferralSystem: React.FC = () => {
 
   const initData = useInitData();
   const { startParam } = useLaunchParams();
+
+  // Helper function to make fetch requests with ngrok bypass header and CORS handling
+  const fetchWithNgrokBypass = async (url: string, options: RequestInit = {}) => {
+    const defaultHeaders = {
+      'ngrok-skip-browser-warning': '69420',
+      'bypass-tunnel-reminder' : '12314',
+      'Content-Type': 'application/json',
+    };
+
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        ...defaultHeaders,
+        ...options.headers,
+      },
+      mode: 'cors',
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response;
+  };
 
   useEffect(() => {
     const initApp = async () => {
@@ -52,38 +77,42 @@ const ReferralSystem: React.FC = () => {
   }, [initData, startParam]);
 
   const createReferral = async (referrerId: number, userId: number) => {
-    await fetch(`${API_BASE_URL}/referrals/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        user_tg_id: referrerId,
-        friend_tg_id: userId,
-      }),
-    });
+    try {
+      await fetchWithNgrokBypass(`${API_BASE_URL}/referrals/`, {
+        method: 'POST',
+        body: JSON.stringify({
+          user_tg_id: referrerId,
+          friend_tg_id: userId,
+        }),
+      });
 
-    // Обновление данных о рефералах после создания реферала
-    fetchUserReferrals(userId);
+      // Обновление данных о рефералах после создания реферала
+      fetchUserReferrals(userId);
+    } catch (error) {
+      console.error('Error creating referral:', error);
+    }
   };
 
   const fetchUserReferrals = async (userId: number) => {
-    console.log('Fetching referrals for user ID:', userId);
-    const referralsResponse = await fetch(`${API_BASE_URL}/referrals/${userId}`);
-    const pointsResponse = await fetch(`${API_BASE_URL}/referrals/${userId}/points`);
+    try {
+      console.log('Fetching referrals for user ID:', userId);
+      const referralsResponse = await fetchWithNgrokBypass(`${API_BASE_URL}/referrals/${userId}`);
+      const pointsResponse = await fetchWithNgrokBypass(`${API_BASE_URL}/referrals/${userId}/points`);
 
-    console.log('Referralls response:', referralsResponse);
-    console.log('Points response:', pointsResponse);
+      console.log('Referrals response:', referralsResponse);
+      console.log('Points response:', pointsResponse);
 
-    const referralsData: Referral[] = await referralsResponse.json();
-    const { total_points } = await pointsResponse.json();
+      const referralsData: Referral[] = await referralsResponse.json();
+      const { total_points } = await pointsResponse.json();
 
+      console.log('Referrals Data:', referralsData);
+      console.log('Total Points:', total_points);
 
-    console.log('Referrals Data:', referralsData);
-    console.log('Total Points:', total_points);
-
-    setReferrals(referralsData);
-    setTotalPoints(total_points);
+      setReferrals(referralsData);
+      setTotalPoints(total_points);
+    } catch (error) {
+      console.error('Error fetching user referrals:', error);
+    }
   };
 
   const handleInviteFriend = () => {
