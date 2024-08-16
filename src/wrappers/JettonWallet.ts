@@ -80,12 +80,12 @@ export class JettonWallet implements Contract {
             .endCell(),
         });
     }    
-    
+
     async getWalletData(provider: ContractProvider) {
         const { stack } = await provider.get('get_wallet_data', []);
 
         return {
-            jetton_balance: stack.readNumber(),
+            jetton_balance: stack.readBigNumber(),
             owner_address: stack.readAddress(),
             jetton_master_address: stack.readAddress(),
             jetton_wallet_code: stack.readCell(),

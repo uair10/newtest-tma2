@@ -22,6 +22,7 @@
     "@tonconnect/ui-react": "^2.0.5",
     "axios": "^1.7.3",
     "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
     "eruda": "^3.0.1",
     "lucide-react": "^0.424.0",
     "process": "^0.11.10",
@@ -29,7 +30,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.0",
     "stream-browserify": "^3.0.0",
-    "util": "^0.12.5"
+    "util": "^0.12.5",
+    "vite-plugin-node-polyfills": "^0.22.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",

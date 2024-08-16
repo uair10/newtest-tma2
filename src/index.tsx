@@ -2,6 +2,9 @@ import ReactDOM from 'react-dom/client';
 
 import { Root } from '@/components/Root';
 
+import { Buffer } from 'buffer';
+globalThis.Buffer = Buffer;
+
 // Uncomment this import in case, you would like to develop the application even outside
 // the Telegram application, just in your browser.
 import './mockEnv.ts';

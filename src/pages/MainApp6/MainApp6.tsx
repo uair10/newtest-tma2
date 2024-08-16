@@ -1,29 +1,15 @@
 import React from 'react';
-import { TonConnectButton, /*useTonAddress*/} from '@tonconnect/ui-react';
+import { TonConnectButton } from '@tonconnect/ui-react';
 import './MainApp6.css';
 import unicornImage from './unicorn.png';
 import FooterMenu from '../FooterMenu/FooterMenu';
-import { useJettonBalance } from '../hooks/useJettonBalance1';
-// import { useMainContract } from '../hooks/useMainContract';
-
+import { useJettonContract } from '../hooks/useJettonContract';
+import { useTonConnect } from '../hooks/useTonConnect';
 
 const MainApp6: React.FC = () => {
-  // const wallet = useTonWallet();
-  //const userFriendlyAddress = useTonAddress();
-  //const { jetton_balance } = useMainContract()
-/*  <div>{userFriendlyAddress}</div>
-{jetton_balance !== null && (
-  <div>Jetton Balance: {jetton_balance.toString()}</div>
-)}
-*/
-
-  const jettonMasterAddress = 'EQA3LxaRQBzZ_QzPsx16EAJ_AchJl0wt4r33Jf0NBofSmOY8'; // Адрес мастер-контракта жетона
-  const { jettonData, loading, error } = useJettonBalance(jettonMasterAddress);
-
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!jettonData) return <div>No data available</div>;
+  const jettonMasterAddress = "EQA3LxaRQBzZ_QzPsx16EAJ_AchJl0wt4r33Jf0NBofSmOY8d";
+  const { jettonBalance, loading, error } = useJettonContract(jettonMasterAddress);
+  const { connected } = useTonConnect();
 
   return (
     <div className="main-app-container">
@@ -31,9 +17,6 @@ const MainApp6: React.FC = () => {
       <div className="header"></div>
       <div className="content">
         <img src={unicornImage} alt="Единорог" className="unicorn-image" />
-        <p>Balance: {jettonData.balance.toString()}</p>
-        <p>Owner: {jettonData.owner.toString()}</p>
-       
         <h1 className="title">LEVELLING UP</h1>
         <p className="description">
           Connect your wallet to access upcoming crypto features. Our team is working hard to bring them to you soon!
@@ -41,6 +24,19 @@ const MainApp6: React.FC = () => {
         <div className="button-wrapper">
           <TonConnectButton className="custom-ton-button" />
         </div>
+        {connected ? (
+          loading ? (
+            <p>Loading jetton balance...</p>
+          ) : error ? (
+            <p>Error loading jetton balance: {error}</p>
+          ) : jettonBalance ? (
+            <p>Jetton Balance: {jettonBalance.balance.toString()}</p>
+          ) : (
+            <p>No jetton balance available</p>
+          )
+        ) : (
+          <p>Connect your wallet to view jetton balance</p>
+        )}
       </div>
       <FooterMenu />
     </div>
