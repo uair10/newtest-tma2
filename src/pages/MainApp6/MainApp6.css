@@ -123,3 +123,10 @@
 .token-balances h3 {
   margin-bottom: 10px;
 }
+
+.jetton-balance {
+  display: flex;
+  font-family: 'Urbanist';
+  font-size: 16px;
+  color: rgba(52, 46, 77, 1);
+}
