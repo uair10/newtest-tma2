@@ -12,7 +12,7 @@ interface Referral {
   points: number;
 }
 
-const API_BASE_URL = 'https://violet-coins-feel.loca.lt'; // Replace with your actual backend URL
+const API_BASE_URL = 'https://b787-38-180-23-221.ngrok-free.app'; // Replace with your actual backend URL
 
 const ReferralSystem: React.FC = () => {
   const [referrals, setReferrals] = useState<Referral[]>([]);
@@ -26,25 +26,45 @@ const ReferralSystem: React.FC = () => {
   const fetchWithNgrokBypass = async (url: string, options: RequestInit = {}) => {
     const defaultHeaders = {
       'ngrok-skip-browser-warning': '69420',
-      'bypass-tunnel-reminder' : '12314',
       'Content-Type': 'application/json',
     };
-
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        ...defaultHeaders,
-        ...options.headers,
-      },
-      mode: 'cors',
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...defaultHeaders,
+          ...options.headers,
+        },
+        mode: 'cors',
+        credentials: 'include',
+      });
+  
+      console.log('Response:', {
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries()),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      return response;
+    } catch (error) {
+      console.error('Fetch error:', error);
+      console.error('Request details:', {
+        url,
+        options: {
+          ...options,
+          headers: {
+            ...defaultHeaders,
+            ...options.headers,
+          },
+        },
+      });
+      throw error;
     }
-
-    return response;
   };
 
   useEffect(() => {
