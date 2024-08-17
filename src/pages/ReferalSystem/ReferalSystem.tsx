@@ -12,7 +12,7 @@ interface Referral {
   points: number;
 }
 
-const API_BASE_URL = 'https://b787-38-180-23-221.ngrok-free.app'; // Replace with your actual backend URL
+const API_BASE_URL = "https://f999-38-180-23-221.ngrok-free.app"
 
 const ReferralSystem: React.FC = () => {
   const [referrals, setReferrals] = useState<Referral[]>([]);
